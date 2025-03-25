@@ -887,7 +887,20 @@ client.connect_signal("mouse::enter", function(c)
     c:emit_signal("request::activate", "mouse_enter", {raise = false})
 end)
 
-client.connect_signal("focus", function(c) c.border_color = beautiful.border_focus end)
+beautiful.gap_single_client = false
+
+-- No borders if only one window on screen
+function border_adjust(c)
+    if #c.screen.clients == 1 then
+        c.border_width = 0
+    elseif #c.screen.clients > 1 then
+        c.border_width = beautiful.border_width
+        c.border_color = beautiful.border_focus
+    end
+end
+
+client.connect_signal("focus", border_adjust)
+--client.connect_signal("focus", function(c) c.border_color = beautiful.border_focus end)
 client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
 -- }}}
 --
